@@ -59,23 +59,17 @@ public class Solution
             {
                 if (x != 0)
                 {
-                    answer += $" - {defalut}";
+                    answer += $" ";
                 }
-                else
-                {
-                    answer += $"- {defalut}";
-                }
+                answer += $"- {defalut}";
             }
             else
             {
                 if (x != 0)
                 {
-                    answer += $" + {defalut}";
+                    answer += $" + ";
                 }
-                else
-                {
-                    answer += $"{defalut}";
-                }
+                answer += $"{defalut}";
             }
         }
         return answer;

@@ -3,46 +3,68 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
 public class Solution
 {
-    int answer = Int32.MaxValue;
+    private int size;
 
-    HashSet<(int, int, int)> visited = new HashSet<(int, int, int)>();
+    private int n;
+    private int m;
+    private int[,] info;
 
-    int N, M;
+    //방문배열 index, countA, countB
+    private HashSet<(int, int, int)> visited = new HashSet<(int, int, int)> ();
 
-    public void DFS(int[,] info, int A = 0, int B = 0, int idx = 0)
+    //A의 최소값
+    private int answer = Int32.MaxValue;
+
+    private void DFS(int index = 0, int countA = 0, int countB = 0)
     {
-        if (A >= answer || visited.Contains((A, B, idx)))
+        //이미 계산된 연산이거나 값이 넘어갔을 경우
+        if (answer <= countA ||visited.Contains((index, countA, countB)))
             return;
 
-        visited.Add((A, B, idx));
+        visited.Add((index, countA, countB));
 
-        if (idx == info.GetLength(0))
+        //다 훔친 경우
+        if (index == size)
         {
-            answer = Math.Min(answer, A);
+            //A의 최소값
+            answer = Math.Min(answer, countA);
             return;
         }
 
-        bool CanA = A + info[idx, 0] < N;
-        bool CanB = B + info[idx, 1] < M;
+        bool canA = countA + info[index, 0] < n;
+        bool canB = countB + info[index, 1] < m;
 
-        if (CanB)
-            DFS(info, A, B + info[idx, 1], idx + 1);
-        if (CanA)
-            DFS(info, A + info[idx, 0], B, idx + 1);
+        if (!canA&&!canB)
+            return;
+
+        // A도둑이 가져갔을 때
+        if (canA)
+        {
+            DFS(index + 1, countA + info[index, 0], countB);
+        }
+
+        if (canB)
+        {
+            // B도둑이 가져갔을 때
+            DFS(index + 1, countA, info[index, 1] +  countB);
+        }
+        
     }
 
     public int solution(int[,] info, int n, int m)
     {
-        int size = info.GetLength(0);
-        N = n;
-        M = m;
+        size = info.GetLength(0);
+        this.info = new int[size, 2];
+        this.info = info;
+        this.n = n;
+        this.m = m;
 
-        DFS(info);
+        DFS(0);
 
         return answer == Int32.MaxValue ? -1 : answer;
     }
-
-    // [[1, 2], [2, 3], [2, 1]]
 }
